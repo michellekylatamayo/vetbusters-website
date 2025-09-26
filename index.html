@@ -1,449 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vetbusters</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body, html {
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      font-family: 'Press Start 2P', cursive;
-      color: white;
-      text-shadow: 2px 2px black;
-    }
-
-    /* Fullscreen background video */
-    video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -1;
-    }
-
-    /* Navigation bar */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #232975;
-      padding: 1rem 2rem;
-      display: none;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 1000;
-      border-bottom: 4px solid #8602d9;
-    }
-
-    .navbar.visible {
-      display: flex;
-    }
-
-    .navbar .logo {
-      font-size: 1.5rem;
-      color: #ffffff;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-links li {
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      background: #8602d9;
-      color: white;
-      transition: transform 0.2s;
-      font-size: 0.7rem;
-      font-weight: bold;
-      box-shadow:
-        2px 0 white,
-        -2px 0 white,
-        0 2px white,
-        0 -2px white,
-        4px 0 black,
-        -4px 0 black,
-        0 4px black,
-        0 -4px black;
-    }
-
-    .nav-links li:hover {
-      transform: scale(1.1);
-      background: #8602d9;
-    }
-
-    .nav-links li.active {
-      background: orange;
-      color: white;
-    }
-
-    /* Center container */
-    .hero {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 2rem;
-      text-align: center;
-      padding: 2rem;
-      position: relative;
-      z-index: 1;
-      transition: transform 1s ease-in-out;
-    }
-
-    .hero.slide-up {
-      transform: translateY(-100vh);
-    }
-
-    .title {
-      font-size: 4rem;
-      transition: transform 0.2s;
-    }
-
-    .title:hover, .slogan:hover {
-      transform: scale(1.1);
-    }
-
-    .slogan {
-      font-size: 1.5rem;
-      max-width: 600px;
-      transition: transform 0.2s;
-    }
-
-    /* 8-bit style button */
-    .btn {
-      font-family: 'Press Start 2P', cursive;
-      display: inline-block;
-      background: orange;
-      color: white;
-      padding: 1rem 2rem;
-      text-decoration: none;
-      border: none;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow:
-        4px 0 white,
-        -4px 0 white,
-        0 4px white,
-        0 -4px white,
-        8px 0 black,
-        -8px 0 black,
-        0 8px black,
-        0 -8px black;
-      transition: transform 0.2s;
-      animation: popIn 0.6s ease-out forwards;
-    }
-
-    .btn span {
-      display: inline-block;
-      animation: textPop 0.6s ease-out forwards;
-      animation-delay: 0.2s;
-      opacity: 0;
-    }
-
-    .btn:hover {
-      transform: scale(1.1);
-      background: #e67e22;
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0); opacity: 0; }
-      60% { transform: scale(1.2); opacity: 1; }
-      80% { transform: scale(0.9); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes textPop {
-      0% { transform: scale(0); opacity: 0; }
-      60% { transform: scale(1); opacity: 1; }
-      80% { transform: scale(0.9); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* Page sections */
-    .page {
-      display: none;
-      height: 100vh;
-      padding: 6rem 2rem 2rem;
-      background: rgba(50, 50, 50, 0.85);
-      backdrop-filter: blur(3px);
-      position: relative;
-      z-index: 2;
-    }
-
-    .page.active {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      animation: fadeIn 0.8s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .page h2 {
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-      color: white;
-      text-shadow: 3px 3px black;
-    }
-
-    /* Navigation arrows */
-    .nav-arrows {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: none;
-      gap: 2rem;
-      z-index: 1001;
-    }
-
-    .nav-arrows.visible {
-      display: flex;
-    }
-
-    .arrow {
-      background: orange;
-      color: white;
-      border: none;
-      padding: 1rem 1.5rem;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.8rem;
-      cursor: pointer;
-      box-shadow: 4px 4px black;
-      transition: transform 0.2s;
-      box-shadow:
-        4px 0 white,
-        -4px 0 white,
-        0 4px white,
-        0 -4px white,
-        8px 0 black,
-        -8px 0 black,
-        0 8px black,
-        0 -8px black;
-    }
-
-    .arrow:hover {
-      transform: scale(1.1);
-      background: #e67e22;
-    }
-
-    .arrow:disabled {
-      background: gray;
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
-
-    /* Services grid */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .service-card {
-      background:white;
-      color: white;
-      padding: 1.5rem;
-      transition: transform 0.3s;
-      box-shadow:
-        8px 0 #232975,
-        -8px 0 #232975,
-        0 8px #232975,
-        0 -8px #232975;
-    }
-
-    .service-card:hover {
-      transform: scale(1.05) translateY(-5px);
-    }
-
-    .service-card h3 {
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-      color: black;
-      text-shadow: none;
-    }
-
-    .service-card p {
-      font-size: 0.6rem;
-      line-height: 1.4;
-      color: black;
-      text-shadow: none;
-    }
-
-    /* Team grid */
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .team-card {
-      background: rgba(0, 100, 200, 0.9);
-      color: white;
-      padding: 1.5rem;
-      border: 4px solid white;
-      box-shadow: 6px 6px black;
-      transition: transform 0.3s;
-    }
-
-    .team-card:hover {
-      transform: scale(1.05);
-    }
-
-    .team-card h3 {
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      color: yellow;
-    }
-
-    .team-card .position {
-      font-size: 0.7rem;
-      color: lightblue;
-      margin-bottom: 1rem;
-    }
-
-    .team-card p {
-      font-size: 0.55rem;
-      line-height: 1.3;
-    }
-
-    /* Info boxes */
-    .info-box {
-      padding: 2.5rem;
-      border: 4px solid white;
-      box-shadow: 8px 8px black;
-      max-width: 550px;
-      margin: 0 auto;
-    }
-
-    .emergency-info {
-      background: rgba(200, 0, 0, 0.9);
-    }
-
-    .emergency-info h3 {
-      font-size: 1.3rem;
-      margin-bottom: 1rem;
-      color: yellow;
-    }
-
-    .emergency-info p {
-      font-size: 0.7rem;
-      line-height: 1.4;
-      margin-bottom: 0.8rem;
-    }
-
-    .contact-info {
-      background: rgba(50, 150, 50, 0.9);
-    }
-
-    .contact-info h3 {
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-      color: yellow;
-    }
-
-    .contact-info p {
-      font-size: 0.65rem;
-      line-height: 1.4;
-      margin-bottom: 0.4rem;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .title {
-        font-size: 2.5rem;
-      }
-      .slogan {
-        font-size: 1rem;
-      }
-      .btn {
-        font-size: 0.8rem;
-        padding: 0.8rem 1.5rem;
-      }
-      .page h2 {
-        font-size: 2rem;
-      }
-      .nav-links {
-        gap: 1rem;
-      }
-      .nav-links li {
-        font-size: 0.6rem;
-        padding: 0.4rem 0.8rem;
-      }
-      .navbar .logo {
-        font-size: 1.2rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .title {
-        font-size: 1.8rem;
-      }
-      .slogan {
-        font-size: 0.8rem;
-      }
-      .btn {
-        font-size: 0.7rem;
-        padding: 0.6rem 1rem;
-      }
-      video {
-        object-position: right center;
-      }
-      .page h2 {
-        font-size: 1.5rem;
-      }
-      .services-grid {
-        grid-template-columns: 1fr;
-      }
-      .team-grid {
-        grid-template-columns: 1fr;
-      }
-      .nav-links {
-        gap: 0.5rem;
-      }
-      .nav-links li {
-        font-size: 0.5rem;
-        padding: 0.3rem 0.6rem;
-      }
-      .page {
-        padding: 5rem 1rem 1rem;
-      }
-    }
-  </style>
+  <link href="https://fonts.google.com/specimen/VT323" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
 </head>
+
 <body>
-  <!-- Background Video -->
   <video autoplay loop muted playsinline>
     <source src="assets/bg.mp4" type="video/mp4">
   </video>
 
-  <!-- Navigation Bar -->
   <nav class="navbar" id="navbar">
     <div class="logo" onclick="goBackToHero()" style="cursor: pointer;">Vetbusters</div>
     <ul class="nav-links">
@@ -454,84 +26,92 @@
     </ul>
   </nav>
 
-  <!-- Hero Section -->
   <div class="hero" id="hero">
     <h1 class="title">Vetbusters</h1>
     <p class="slogan">"When sickness attacks, <br> who you gonna call?"</p>
     <button class="btn" onclick="startAdventure()"><span>Enter Clinic</span></button>
   </div>
 
-  <!-- Page 0: Services -->
   <div class="page" id="page-0">
     <h2><span style="color: red;">Power-ups</span> for Your Pet</h2>
     <div class="services-grid">
       <div class="service-card">
+        <img class="service-img" src="assets/health.png" alt="health">
         <h3>Health Check Quest</h3>
-        <p>Complete wellness exams to keep your pet's stats at maximum level. Regular check-ups prevent status ailments.</p>
+        <p>Complete wellness exams to keep your pet's stats at maximum level. Regular check-ups prevent status ailments.
+        </p>
       </div>
       <div class="service-card">
+        <img class="service-img" src="assets/vaccine.png" alt="health">
         <h3>Vaccination Shield</h3>
         <p>Protect your companion with immunity boosters against common diseases. Essential armor for adventures.</p>
       </div>
       <div class="service-card">
+        <img class="service-img" src="assets/surgery.png" alt="health">
         <h3>Surgery Mission</h3>
         <p>Advanced healing procedures performed by expert healers. From minor repairs to major restoration quests.</p>
       </div>
       <div class="service-card">
+        <img class="service-img" src="assets/emergency.png" alt="health">
         <h3>Emergency Rescue</h3>
         <p>24/7 rapid response team ready for critical health battles. No quest too dangerous for our heroes.</p>
       </div>
       <div class="service-card">
+        <img class="service-img" src="assets/dental.png" alt="health">
         <h3>Dental Maintenance</h3>
         <p>Keep those chompers sharp and healthy. Prevent tooth decay debuffs with regular cleaning sessions.</p>
       </div>
       <div class="service-card">
+        <img class="service-img" src="assets/grooming.png" alt="health">
         <h3>Grooming Spa</h3>
         <p>Aesthetic enhancement services to keep your pet looking legendary. Boost confidence stats significantly.</p>
       </div>
     </div>
   </div>
 
-  <!-- Page 1: Team -->
   <div class="page" id="page-1">
-    <h2>Meet Your Pet Heroes</h2>
+    <h2>Meet Your Pet <span style="color: blue; text-shadow: 2px 2px white;">Heroes</span></h2>
     <div class="team-grid">
       <div class="team-card">
         <h3>Dr. Sarah Mitchell</h3>
-        <div class="position">Chief Veterinary Hero - Level 85</div>
-        <p>Specializes in small animal care and surgical quests. 15+ years of experience defeating pet ailments. Master of the healing arts.</p>
+        <img class="team-img" src="assets/sarah.png" alt="sarah">
+        <div class="position">Chief Veterinary Hero <br> Level 85</div>
+        <p>Specializes in small animal care and surgical quests. 15+ years of experience defeating pet ailments. Master
+          of the healing arts.</p>
       </div>
       <div class="team-card">
         <h3>Dr. James Rodriguez</h3>
-        <div class="position">Exotic Pet Specialist - Level 72</div>
+        <img class="team-img" src="assets/james.png" alt="james">
+        <div class="position">Exotic Specialist <br> Level 72</div>
         <p>Expert in rare and exotic companion care. Specialized knowledge in reptiles, birds, and unusual pets.</p>
       </div>
       <div class="team-card">
-        <h3>Lisa Chen, RVT</h3>
-        <div class="position">Support Hero - Level 68</div>
-        <p>Lead veterinary technician with advanced skills in patient care and diagnostic equipment operation.</p>
+        <h3>Dr. Lisa Chen, RVT</h3>
+        <img class="team-img" src="assets/lisa.png" alt="lisa">
+        <div class="position">Support Hero <br> Level 68</div>
+        <p>Lead veterinary technician with advanced skills in patient care and diagnostic equipment operation. Master of
+          everything!</p>
       </div>
     </div>
   </div>
 
-  <!-- Page 2: Emergency -->
   <div class="page" id="page-2">
     <h2>24/7 Boss Battle Support</h2>
     <div class="info-box emergency-info">
       <h3>Emergency Hotline</h3>
-      <p>📞 (555) VET-HELP</p>
-      <p>When your pet faces a critical health boss battle, our emergency response team is ready 24/7. Don't wait - every second counts!</p>
+      <p>📞 +63 912 345 6789</p>
+      <p>When your pet faces a critical health boss battle, our emergency response team is ready 24/7. Don't wait -
+        every second counts!</p>
       <p>After-hours emergencies are handled at our fully equipped night clinic with on-call veterinary heroes.</p>
     </div>
   </div>
 
-  <!-- Page 3: Contact -->
   <div class="page" id="page-3">
     <h2>Base of Operations</h2>
     <div class="info-box contact-info">
       <h3>Clinic Location</h3>
-      <p>📍 123 Pet Paradise Lane, Animal City, AC 12345</p>
-      <p>📞 Phone: (555) 123-PETS</p>
+      <p>📍 123 Pet Paradise Lane, Animal City, Manila</p>
+      <p>📞 Phone: +63 912 345 6789</p>
       <p>📧 Email: heroes@vetbusters.com</p>
       <p>🕐 Hours: Mon-Fri 8AM-6PM, Sat 9AM-4PM</p>
       <p>🚨 Emergency: 24/7 availability</p>
@@ -540,113 +120,11 @@
     </div>
   </div>
 
-  <!-- Navigation Arrows -->
   <div class="nav-arrows" id="navArrows">
     <button class="arrow" id="prevBtn" onclick="previousPage()">◀ PREV</button>
     <button class="arrow" id="nextBtn" onclick="nextPage()">NEXT ▶</button>
   </div>
 
-  <script>
-    let currentPage = 0;
-    const totalPages = 4;
-    let isInPages = false;
-
-    function startAdventure() {
-      const hero = document.getElementById('hero');
-      const navbar = document.getElementById('navbar');
-      const navArrows = document.getElementById('navArrows');
-      
-      // Slide hero section upward
-      hero.classList.add('slide-up');
-      
-      // Show navbar and navigation after hero slides up
-      setTimeout(() => {
-        navbar.classList.add('visible');
-        navArrows.classList.add('visible');
-        hero.style.display = 'none';
-        isInPages = true;
-        goToPage(0);
-      }, 1000);
-    }
-
-    function goToPage(pageNum) {
-      if (!isInPages) return;
-      
-      // Hide current page
-      const currentPageEl = document.getElementById(`page-${currentPage}`);
-      if (currentPageEl) {
-        currentPageEl.classList.remove('active');
-      }
-      
-      // Update current page
-      currentPage = pageNum;
-      
-      // Show new page
-      const newPageEl = document.getElementById(`page-${currentPage}`);
-      newPageEl.classList.add('active');
-      
-      // Update navigation
-      updateNavigation();
-    }
-
-    function nextPage() {
-      if (currentPage < totalPages - 1) {
-        goToPage(currentPage + 1);
-      }
-    }
-
-    function previousPage() {
-      if (currentPage > 0) {
-        goToPage(currentPage - 1);
-      }
-    }
-
-    function updateNavigation() {
-      // Update arrow buttons
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      
-      prevBtn.disabled = currentPage === 0;
-      nextBtn.disabled = currentPage === totalPages - 1;
-      
-      // Update navigation links
-      for (let i = 0; i < totalPages; i++) {
-        const navLink = document.getElementById(`nav-${i}`);
-        if (i === currentPage) {
-          navLink.classList.add('active');
-        } else {
-          navLink.classList.remove('active');
-        }
-      }
-    }
-
-    function goBackToHero() {
-      const hero = document.getElementById('hero');
-      const navbar = document.getElementById('navbar');
-      const navArrows = document.getElementById('navArrows');
-
-      // Show hero again
-      hero.style.display = 'flex';
-      hero.classList.remove('slide-up'); // reset animation if needed
-
-      // Hide navbar + arrows
-      navbar.classList.remove('visible');
-      navArrows.classList.remove('visible');
-
-      // Reset pages state
-      isInPages = false;
-      currentPage = 0;
-
-      // Hide all page sections
-      for (let i = 0; i < totalPages; i++) {
-        const pageEl = document.getElementById(`page-${i}`);
-        if (pageEl) pageEl.classList.remove('active');
-      }
-
-      // Smooth scroll back to hero
-      hero.scrollIntoView({ behavior: 'smooth' });
-    }
-
-  </script>
 </body>
+
 </html>
